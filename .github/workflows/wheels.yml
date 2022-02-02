@@ -33,7 +33,7 @@ jobs:
         if: runner.os != 'Windows'
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BUILD: "cp27-* cp35-* pp27-* pp36-* pp37-*"
+          CIBW_BUILD: "cp27-* cp35-* pp27-* pp36-*"
 
       - name: Build a 64-bit wheel (Windows)
         if: runner.os == 'Windows'
