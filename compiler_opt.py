@@ -42,71 +42,7 @@ def test_compilation(program, extra_cc_options=None, extra_libraries=None,
     """Test if a certain C program can be compiled."""
 
     # Create a temporary file with the C program
-    if not os.path.exists("build"):
-        os.makedirs("build")
-    fname = os.path.join("build", "test1.c")
-    f = open(fname, 'w')
-    f.write(program)
-    f.close()
-
-    # Name for the temporary executable
-    oname = os.path.join("build", "test1.out")
-
-    debug = bool(os.environ.get('PYCRYPTODOME_DEBUG', None))
-    # Mute the compiler and the linker
-    if msg:
-        print("Testing support for %s" % msg)
-    if not (debug or os.name == 'nt'):
-        old_stdout = os.dup(sys.stdout.fileno())
-        old_stderr = os.dup(sys.stderr.fileno())
-        dev_null = open(os.devnull, "w")
-        os.dup2(dev_null.fileno(), sys.stdout.fileno())
-        os.dup2(dev_null.fileno(), sys.stderr.fileno())
-
-    objects = []
-    try:
-        compiler = ccompiler.new_compiler()
-        distutils.sysconfig.customize_compiler(compiler)
-
-        if compiler.compiler_type in ['msvc']:
-            # Force creation of the manifest file (http://bugs.python.org/issue16296)
-            # as needed by VS2010
-            extra_linker_options = ["/MANIFEST"]
-        else:
-            extra_linker_options = []
-
-        # In Unix, force the linker step to use CFLAGS and not CC alone (see GH#180)
-        if compiler.compiler_type in ['unix']:
-            compiler.set_executables(linker_exe=compiler.compiler)
-
-        objects = compiler.compile([fname], extra_postargs=extra_cc_options)
-        compiler.link_executable(objects, oname, libraries=extra_libraries,
-                                 extra_preargs=extra_linker_options)
-        result = True
-    except (CCompilerError, OSError):
-        result = False
-    for f in objects + [fname, oname]:
-        try:
-            os.remove(f)
-        except OSError:
-            pass
-
-    # Restore stdout and stderr
-    if not (debug or os.name == 'nt'):
-        if old_stdout is not None:
-            os.dup2(old_stdout, sys.stdout.fileno())
-        if old_stderr is not None:
-            os.dup2(old_stderr, sys.stderr.fileno())
-        if dev_null is not None:
-            dev_null.close()
-    if msg:
-        if result:
-            x = ""
-        else:
-            x = " not"
-        print("Target does%s support %s" % (x, msg))
-
-    return result
+    return False
 
 
 def has_stdint_h():
